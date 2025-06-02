@@ -1,0 +1,17 @@
+//
+//  Debug.xcconfig
+//  Adsy
+//
+//  Created by Samet Berberoğlu on 2025-06-02.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+API_SCHEME = https
+API_IMAGE_SCHEME = https
+API_BASE_URL = gist.githubusercontent.com
+API_IMAGE_BASE_URL = images.finncdn.no
+
+APP_ENV = DEBUG
+OTHER_SWIFT_FLAGS = -DDEBUG

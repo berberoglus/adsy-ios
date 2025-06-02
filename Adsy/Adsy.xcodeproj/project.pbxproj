@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B12AD4572DEE27B800E186E1 /* SBNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = B12AD4562DEE27B800E186E1 /* SBNetworking */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B11186D72DED89B00080FD9C /* Adsy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Adsy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B12AD4682DEE367A00E186E1 /* Exceptions for "Adsy" folder in "Adsy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"SupportingFiles/Adsy-Info.plist",
+			);
+			target = B11186D62DED89B00080FD9C /* Adsy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B11186D92DED89B00080FD9C /* Adsy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B12AD4682DEE367A00E186E1 /* Exceptions for "Adsy" folder in "Adsy" target */,
+			);
 			path = Adsy;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B12AD4572DEE27B800E186E1 /* SBNetworking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = Adsy;
 			packageProductDependencies = (
+				B12AD4562DEE27B800E186E1 /* SBNetworking */,
 			);
 			productName = Adsy;
 			productReference = B11186D72DED89B00080FD9C /* Adsy.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = B11186CE2DED89B00080FD9C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B12AD4552DEE27B800E186E1 /* XCRemoteSwiftPackageReference "SBNetworking" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B11186D82DED89B00080FD9C /* Products */;
 			projectDirPath = "";
@@ -228,6 +250,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -246,6 +269,8 @@
 		};
 		B11186E32DED89B10080FD9C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B11186D92DED89B00080FD9C /* Adsy */;
+			baseConfigurationReferenceRelativePath = SupportingFiles/Debug.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -253,16 +278,18 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Adsy/SupportingFiles/Adsy-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sametberberoglu.Adsy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -273,6 +300,8 @@
 		};
 		B11186E42DED89B10080FD9C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B11186D92DED89B00080FD9C /* Adsy */;
+			baseConfigurationReferenceRelativePath = SupportingFiles/Release.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -280,16 +309,18 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Adsy/SupportingFiles/Adsy-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sametberberoglu.Adsy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -320,6 +351,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B12AD4552DEE27B800E186E1 /* XCRemoteSwiftPackageReference "SBNetworking" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/berberoglus/SBNetworking.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B12AD4562DEE27B800E186E1 /* SBNetworking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B12AD4552DEE27B800E186E1 /* XCRemoteSwiftPackageReference "SBNetworking" */;
+			productName = SBNetworking;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B11186CF2DED89B00080FD9C /* Project object */;
 }

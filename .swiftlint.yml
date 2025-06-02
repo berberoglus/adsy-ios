@@ -1,0 +1,102 @@
+only_rules:
+  - closure_spacing
+  - colon
+  - empty_enum_arguments
+  - fatal_error_message
+# - force_cast
+  - force_try
+#  - force_unwrapping
+#  - implicitly_unwrapped_optional
+  - legacy_cggeometry_functions
+  - legacy_constant
+  - legacy_constructor
+  - legacy_nsgeometry_functions
+  - operator_usage_whitespace
+  - redundant_string_enum_value
+  - redundant_void_return
+  - type_name
+  - return_arrow_whitespace
+  - trailing_newline
+  - unused_closure_parameter
+  - unused_optional_binding
+  - vertical_whitespace
+  - void_return
+  - line_length
+  - duplicate_imports
+  - custom_rules
+  - opening_brace
+  - comma
+  - mark
+  - private_over_fileprivate
+  - statement_position
+  - trailing_semicolon
+  - closing_brace
+  - redundant_objc_attribute
+  - leading_whitespace
+  - no_space_in_method_call
+  - redundant_optional_initialization
+  - empty_parentheses_with_trailing_closure
+  - todo
+  # disabled rules
+  # - identifier_name
+  # - function_body_length
+  # - file_length
+  # - multiple_closures_with_trailing_closure
+  # - for_where
+  # - trailing_comma
+  # - vertical_parameter_alignment
+  # - control_statement
+  # - cyclomatic_complexity
+  # - type_body_length
+  # - compiler_protocol_init
+  # - function_parameter_count
+  # - weak_delegate
+  # - class_delegate_protocol
+  # - shorthand_operator
+
+  # - syntactic_sugar
+  # - closure_parameter_position
+  # - unused_setter_value
+  # - operator_whitespace
+  # - discarded_notification_center_observer
+  # - unneeded_break_in_switch
+  # - implicit_getter
+  # - switch_case_alignment
+  # - block_based_kvo
+  # - discouraged_direct_init
+  # - valid_ibinspectable
+  # - notification_center_detachment
+  # - nesting 
+
+excluded:
+  - clonedSourcePackagesDirectory
+  - Frameworks
+  - iShapeTests
+  - fastlane
+  - scripts
+  - test_runner
+  - Lifesum WatchKit App
+  - Lifesum WatchKit Extension
+  - LifesumStickers
+  - FileTemplates
+  - vendor
+colon:
+  apply_to_dictionaries: false
+
+type_name:
+  max_length:
+    warning: 60
+    error: 100
+
+line_length: 120
+
+indentation: 2
+
+custom_rules:
+  no_objcMembers:
+    name: "@objcMembers"
+    regex: "@objcMembers"
+    message: "Explicitly use @objc on each member you want to expose to Objective-C"
+    severity: error
+    
+reporter: "json"

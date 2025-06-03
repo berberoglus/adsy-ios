@@ -30,14 +30,14 @@ struct AdItemModel: Decodable {
 }
 
 struct PriceModel: Decodable {
-    let value: Int?
-    let total: Int?
+    let value: Double?
+    let total: Double?
 }
 
 struct ImageModel: Decodable {
     let url: String?
-    let height: Int?
-    let width: Int?
+    let height: Double?
+    let width: Double?
 }
 
 enum AdType: String, Decodable {
@@ -52,4 +52,26 @@ enum AdType: String, Decodable {
         let value = try container.decode(String.self)
         self = AdType(rawValue: value) ?? .other
     }
+}
+
+extension AdItemModel {
+
+    var presenter: AdRowView.Presenter {
+        return AdRowView.Presenter(
+            description: description ?? "No description",
+            price: formattedPrice,
+            location: location ?? "Unknown",
+            imageURL: DefaultEnvironment.imageURL(for: image?.url ?? "")
+        )
+    }
+
+    var formattedPrice: String {
+        guard let value = price?.total,
+              let priceString = NumberFormatter.priceFormatter.string(from: NSNumber(value: value)) else {
+            return "Contact Seller"
+        }
+
+        return priceString
+    }
+
 }

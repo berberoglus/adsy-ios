@@ -11,7 +11,7 @@ import SwiftUI
 struct AdsyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeSceneView()
         }
     }
 }

@@ -71,13 +71,9 @@ only_rules:
 excluded:
   - clonedSourcePackagesDirectory
   - Frameworks
-  - iShapeTests
   - fastlane
   - scripts
   - test_runner
-  - Lifesum WatchKit App
-  - Lifesum WatchKit Extension
-  - LifesumStickers
   - FileTemplates
   - vendor
 colon:

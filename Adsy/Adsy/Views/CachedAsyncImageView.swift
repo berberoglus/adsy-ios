@@ -12,6 +12,7 @@ struct CachedAsyncImageView: View {
     @State private var image: Image?
     @State private var isLoadFailed = false
     @State private var hasAttemptedLoad = false
+    @State private var loadingTask: URLSessionDataTask?
 
     let url: URL?
 
@@ -33,6 +34,9 @@ struct CachedAsyncImageView: View {
         .onAppear {
             loadImage()
         }
+        .onDisappear {
+            cancelLoading()
+        }
         .id(url?.absoluteString ?? "placeholder")
     }
 }
@@ -52,8 +56,18 @@ private extension CachedAsyncImageView {
 
     private static var cache = NSCache<NSURL, UIImage>()
     private static var failedURLs = Set<String>()
+    
+    private func cancelLoading() {
+        loadingTask?.cancel()
+        loadingTask = nil
+        if isLoading {
+            isLoading = false
+        }
+    }
 
     private func loadImage() {
+        cancelLoading()
+
         if image != nil || hasAttemptedLoad { return }
         hasAttemptedLoad = true
 
@@ -75,9 +89,13 @@ private extension CachedAsyncImageView {
         isLoading = true
 
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error as NSError?, error.code == NSURLErrorCancelled {
+                return
+            }
+            
             DispatchQueue.main.async {
                 isLoading = false
-
+                
                 if error != nil {
                     Self.failedURLs.insert(url.absoluteString)
                     isLoadFailed = true
@@ -97,6 +115,8 @@ private extension CachedAsyncImageView {
                 setImage(uiImage)
             }
         }
+        
+        loadingTask = task
         task.resume()
     }
 

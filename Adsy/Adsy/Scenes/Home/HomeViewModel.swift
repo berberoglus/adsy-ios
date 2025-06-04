@@ -10,9 +10,10 @@ import Observation
 
 @Observable
 class HomeViewModel {
-    enum FilterType {
-        case all
-        case favorites
+
+    enum SegmentOption: String, CaseIterable {
+        case all = "All"
+        case favorites = "Favorites"
     }
 
     enum ViewState {
@@ -24,19 +25,16 @@ class HomeViewModel {
 
     var viewState: ViewState = .loading
     private var ads: [AdItemModel] = []
-//    var filteredAds: [AdItemModel] = []
-//    var isLoading = false
-//    var errorMessage: String?
 
     var searchText = "" {
         didSet {
-            filterAds(searchText: searchText, filter: currentFilter)
+            filterAds(searchText: searchText, filter: selectedSegment)
         }
     }
 
-    var currentFilter: FilterType = .all {
+    var selectedSegment: SegmentOption = .all {
         didSet {
-            filterAds(searchText: searchText, filter: currentFilter)
+            filterAds(searchText: searchText, filter: selectedSegment)
         }
     }
     
@@ -44,7 +42,7 @@ class HomeViewModel {
     
     func loadAds() {
         viewState = .loading
-        currentFilter = .all
+        selectedSegment = .all
         searchText = ""
 
         let endpoint = AdsEndpoint()
@@ -59,7 +57,7 @@ class HomeViewModel {
         }
     }
     
-    private func filterAds(searchText: String, filter: FilterType) {
+    private func filterAds(searchText: String, filter: SegmentOption) {
         var filtered = ads
 
         if !searchText.isEmpty {

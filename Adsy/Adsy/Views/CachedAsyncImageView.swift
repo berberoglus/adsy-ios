@@ -11,8 +11,10 @@ struct CachedAsyncImageView: View {
     @State private var isLoading = false
     @State private var image: Image?
     @State private var isLoadFailed = false
-    @State private var hasAttemptedLoad = false
     @State private var loadingTask: URLSessionDataTask?
+
+    private static var cache = NSCache<NSURL, UIImage>()
+    private static var failedURLs = Set<String>()
 
     let url: URL?
 
@@ -38,6 +40,9 @@ struct CachedAsyncImageView: View {
             cancelLoading()
         }
         .id(url?.absoluteString ?? "placeholder")
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in
+            Self.removeAllImages()
+        }
     }
 }
 
@@ -54,29 +59,17 @@ private extension CachedAsyncImageView {
 
 private extension CachedAsyncImageView {
 
-    private static var cache = NSCache<NSURL, UIImage>()
-    private static var failedURLs = Set<String>()
-    
-    private func cancelLoading() {
-        loadingTask?.cancel()
-        loadingTask = nil
-        if isLoading {
-            isLoading = false
-        }
-    }
-
     private func loadImage() {
         cancelLoading()
 
-        if image != nil || hasAttemptedLoad { return }
-        hasAttemptedLoad = true
+        if image != nil { return }
 
         guard let url = url else {
             isLoadFailed = true
             return
         }
 
-        if Self.failedURLs.contains(url.absoluteString) {
+        if Self.hasFailed(url) {
             isLoadFailed = true
             return
         }
@@ -97,7 +90,7 @@ private extension CachedAsyncImageView {
                 isLoading = false
                 
                 if error != nil {
-                    Self.failedURLs.insert(url.absoluteString)
+                    Self.markAsFailed(url)
                     isLoadFailed = true
                     return
                 }
@@ -106,7 +99,7 @@ private extension CachedAsyncImageView {
                       (200...299).contains(httpResponse.statusCode),
                       let data = data,
                       let uiImage = UIImage(data: data) else {
-                    Self.failedURLs.insert(url.absoluteString)
+                    Self.markAsFailed(url)
                     isLoadFailed = true
                     return
                 }
@@ -120,17 +113,36 @@ private extension CachedAsyncImageView {
         task.resume()
     }
 
+    private func cancelLoading() {
+        loadingTask?.cancel()
+        loadingTask = nil
+        if isLoading {
+            isLoading = false
+        }
+    }
+
     private func setImage(_ uiImage: UIImage) {
         image = Image(uiImage: uiImage)
     }
 
-    private static func image(for url: URL?) -> UIImage? {
-        guard let url = url else { return nil }
-        return cache.object(forKey: url as NSURL)
+    private static func image(for url: URL) -> UIImage? {
+        cache.object(forKey: url as NSURL)
     }
 
-    private static func insertImage(_ image: UIImage, for url: URL?) {
-        guard let url = url else { return }
+    private static func insertImage(_ image: UIImage, for url: URL) {
         cache.setObject(image, forKey: url as NSURL)
+    }
+
+    private static func removeAllImages() {
+        cache.removeAllObjects()
+        failedURLs.removeAll()
+    }
+
+    private static func markAsFailed(_ url: URL) {
+        failedURLs.insert(url.absoluteString)
+    }
+
+    private static func hasFailed(_ url: URL) -> Bool {
+        failedURLs.contains(url.absoluteString)
     }
 }

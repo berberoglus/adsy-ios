@@ -6,18 +6,24 @@
 //
 
 import SwiftUI
-import Observation
 
 struct HomeSceneView: View {
 
-    enum SegmentOption: String, CaseIterable {
-        case all = "All"
-        case favorites = "Favorites"
+    private enum LayoutConstants {
+        static let listSpacing: CGFloat = 12.0
+        static let horizontalPadding: CGFloat = 16.0
+        static let gridSpacing: CGFloat = 8.0
+        static let gridColumns = 2
+    }
+
+    enum ViewMode {
+        case list
+        case grid
     }
 
     @State private var viewModel = HomeViewModel()
-    @State private var selectedSegment: SegmentOption = .all
-    
+    @State private var viewMode: ViewMode = .list
+
     var body: some View {
         NavigationStack {
             VStack(spacing: .zero) {
@@ -27,8 +33,16 @@ struct HomeSceneView: View {
             .searchable(text: $viewModel.searchText, prompt: "Search Ads")
             .navigationTitle("Adsy")
             .navigationBarTitleDisplayMode(.inline)
-            .onChange(of: selectedSegment) { _, newValue in
-                viewModel.currentFilter = newValue == .all ? .all : .favorites
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        withAnimation {
+                            viewMode = viewMode == .list ? .grid : .list
+                        }
+                    } label: {
+                        Image(systemName: viewMode == .list ? "square.grid.2x2" : "list.bullet")
+                    }
+                }
             }
             .onAppear {
                 viewModel.loadAds()
@@ -42,11 +56,11 @@ struct HomeSceneView: View {
 private extension HomeSceneView {
 
     private var segmentedControlView: some View {
-        return SegmentedControlView(
-            selectedValue: $selectedSegment,
-            options: SegmentOption.allCases.map { ($0.rawValue, $0) }
+        SegmentedControlView(
+            selectedValue: $viewModel.selectedSegment,
+            options: HomeViewModel.SegmentOption.allCases.map { ($0.rawValue, $0) }
         )
-        .padding(.horizontal, 16.0)
+        .padding(.horizontal, LayoutConstants.horizontalPadding)
     }
 
     @ViewBuilder
@@ -59,7 +73,16 @@ private extension HomeSceneView {
         case .emptyFilteredAds:
             emptyFilterView
         case .adsLoaded(let ads):
+            contentView(ads)
+        }
+    }
+
+    @ViewBuilder
+    private func contentView(_ ads: [AdItemModel]) -> some View {
+        if viewMode == .list {
             adsListView(ads)
+        } else {
+            adsGridView(ads)
         }
     }
 
@@ -111,15 +134,33 @@ private extension HomeSceneView {
 
     private func adsListView(_ ads: [AdItemModel]) -> some View {
         ScrollView {
-            LazyVStack(spacing: 12.0) {
+            LazyVStack(spacing: LayoutConstants.listSpacing) {
                 ForEach(ads, id: \.id) { ad in
                     AdRowView(
                         presenter: ad.presenter
                     )
-                    .padding(.horizontal, 16.0)
+                    .padding(.horizontal, LayoutConstants.horizontalPadding)
                 }
             }
-            .padding(.top, 12.0)
+            .padding(.top, LayoutConstants.listSpacing)
+        }
+    }
+
+    private func adsGridView(_ ads: [AdItemModel]) -> some View {
+        let columns = Array(
+            repeating: GridItem(.flexible(), spacing: LayoutConstants.gridSpacing),
+            count: LayoutConstants.gridColumns
+        )
+
+        return ScrollView {
+            LazyVGrid(columns: columns, spacing: LayoutConstants.gridSpacing) {
+                ForEach(ads, id: \.id) { ad in
+                    AdGridItemView(
+                        presenter: ad.presenter
+                    )
+                }
+            }
+            .padding(.horizontal, LayoutConstants.horizontalPadding)
         }
     }
 }

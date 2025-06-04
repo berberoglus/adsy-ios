@@ -9,15 +9,8 @@ import SwiftUI
 
 struct AdRowView: View {
 
-    struct Presenter {
-        let description: String
-        let price: String
-        let location: String
-        let imageURL: URL?
-    }
-
     @State private var isFavorite: Bool = false
-    let presenter: Presenter
+    let presenter: AdItemPresenter
 
     var body: some View {
         HStack(alignment: .top, spacing: 8.0) {
@@ -39,13 +32,12 @@ struct AdRowView: View {
 private extension AdRowView {
 
     private var imageView: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.sbPrimaryContent)
-
-            CachedAsyncImageView(url: presenter.imageURL)
-        }
-        .frame(width: 120.0, height: 90.0)
+        CachedAsyncImageView(url: presenter.imageURL)
+            .frame(width: 120.0, height: 90.0)
+            .background(
+                Rectangle()
+                    .fill(Color.sbPrimaryContent)
+            )
     }
 
     private var infoView: some View {
@@ -76,6 +68,7 @@ private extension AdRowView {
                 Text(presenter.location)
                     .font(.sfProSemibold(size: 15.0))
             }
+            .foregroundStyle(Color.sbSecondaryText)
         }
     }
 }
@@ -84,7 +77,7 @@ private extension AdRowView {
 
 #Preview {
     AdRowView(
-        presenter: AdRowView.Presenter(
+        presenter: AdItemPresenter(
             description: "Beautiful apartment in the city center",
             price: "4 500 000 SEK",
             location: "Arendal",

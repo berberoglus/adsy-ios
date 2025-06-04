@@ -55,9 +55,8 @@ enum AdType: String, Decodable {
 }
 
 extension AdItemModel {
-
-    var presenter: AdRowView.Presenter {
-        return AdRowView.Presenter(
+    var presenter: AdItemPresenter {
+        return AdItemPresenter(
             description: description ?? "No description",
             price: formattedPrice,
             location: location ?? "Unknown",
@@ -73,5 +72,4 @@ extension AdItemModel {
 
         return priceString
     }
-
 }

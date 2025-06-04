@@ -51,7 +51,19 @@ enum AdType: String, Decodable {
     }
 }
 
+// MARK: - Conversion
+
 extension AdItemModel {
+
+    var formattedPrice: String {
+        guard let value = price?.total,
+              let priceString = NumberFormatter.priceFormatter.string(from: NSNumber(value: value)) else {
+            return "Contact Seller"
+        }
+
+        return priceString
+    }
+
     var presenter: AdItemPresenter {
         return AdItemPresenter(
             id: id,
@@ -62,19 +74,6 @@ extension AdItemModel {
         )
     }
 
-    var formattedPrice: String {
-        guard let value = price?.total,
-              let priceString = NumberFormatter.priceFormatter.string(from: NSNumber(value: value)) else {
-            return "Contact Seller"
-        }
-
-        return priceString
-    }
-}
-
-// MARK: - Conversion
-
-extension AdItemModel {
     static func fromFavoriteAdItemModel(_ favoriteAdItemModel: FavoriteAdItemModel) -> AdItemModel {
         return AdItemModel(
             id: favoriteAdItemModel.id,

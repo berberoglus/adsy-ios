@@ -50,7 +50,7 @@ private extension AdGridView {
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.sfProSemibold(size: 20.0))
-                        .foregroundColor(isFavorite ? .red : .white)
+                        .foregroundStyle(isFavorite ? Color.red : Color.white)
                         .padding(8.0)
                         .background(
                             Circle()

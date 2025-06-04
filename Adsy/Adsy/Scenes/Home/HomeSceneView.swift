@@ -24,6 +24,7 @@ struct HomeSceneView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = HomeViewModel()
     @State private var viewMode: ViewMode = .list
+    @State private var shouldShowFilterView = false
 
     var body: some View {
         NavigationStack {
@@ -31,11 +32,12 @@ struct HomeSceneView: View {
                 segmentedControlView
                 containerView
             }
+            .background(Color.sbMainBackground)
             .searchable(text: $viewModel.searchText, prompt: "Search Ads")
             .navigationTitle("Adsy")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button {
                         withAnimation {
                             viewMode = viewMode == .list ? .grid : .list
@@ -44,10 +46,25 @@ struct HomeSceneView: View {
                         Image(systemName: viewMode == .list ? "square.grid.2x2" : "list.bullet")
                     }
                 }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        shouldShowFilterView = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    }
+                }
             }
             .onAppear {
                 viewModel.setModelContext(modelContext)
-                viewModel.loadAds()
+                viewModel.fetchAds()
+            }
+            .sheet(isPresented: $shouldShowFilterView) {
+                AdTypeFilterView(
+                    selectedFilter: $viewModel.selectedAdTypeFilter,
+                    isPresented: $shouldShowFilterView
+                )
+                .presentationDetents([.medium])
             }
         }
     }
@@ -106,11 +123,23 @@ private extension HomeSceneView {
             if !viewModel.searchText.isEmpty {
                 Text("Try to search for another term")
                     .font(.sfProRegular(size: 15.0))
-                    .foregroundColor(.sbSecondaryText)
+                    .foregroundStyle(Color.sbSecondaryText)
             } else if viewModel.selectedSegment == .favorites {
                 Text("Add items to your favorites")
                     .font(.sfProRegular(size: 15.0))
-                    .foregroundColor(.sbSecondaryText)
+                    .foregroundStyle(Color.sbSecondaryText)
+            } else if viewModel.selectedAdTypeFilter != nil {
+                Text("No ads in this category")
+                    .font(.sfProRegular(size: 15.0))
+                    .foregroundStyle(Color.sbSecondaryText)
+                Button {
+                    viewModel.resetFilters()
+                } label: {
+                    Label("Clear Filters", systemImage: "xmark.circle")
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .padding(.top, 8.0)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -127,9 +156,9 @@ private extension HomeSceneView {
                 .foregroundStyle(Color.sbSecondaryText)
             
             Button {
-                viewModel.loadAds()
+                viewModel.fetchAds()
             } label: {
-                Text("Retry")
+                Label("Retry", systemImage: "arrow.clockwise")
                     .foregroundStyle(Color.sbConstantText)
                     .font(.sfProSemibold(size: 15.0))
             }

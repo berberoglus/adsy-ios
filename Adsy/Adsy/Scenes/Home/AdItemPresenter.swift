@@ -19,7 +19,7 @@ struct AdItemPresenter {
         description: String?,
         price: String?,
         location: String?,
-        imageURL: String?,
+        imageURL: String?
     ) {
         self.id = id
         self.description = description ?? "No description"

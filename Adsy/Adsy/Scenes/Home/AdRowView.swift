@@ -57,14 +57,14 @@ private extension AdRowView {
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.sfProSemibold(size: 24.0))
-                        .foregroundColor(isFavorite ? .red : .sbPrimaryText)
+                        .foregroundStyle(isFavorite ? Color.red : Color.sbPrimaryText)
                 }
                 .animation(.spring, value: isFavorite)
             }
 
             Text(presenter.description)
                 .font(.sfProRegular(size: 13.0))
-                .foregroundColor(.sbSecondaryText)
+                .foregroundStyle(Color.sbSecondaryText)
 
             HStack(spacing: 2.0) {
                 Image(systemName: "location.fill")

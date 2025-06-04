@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 import SwiftData
 import Combine
 
@@ -28,6 +27,12 @@ class HomeViewModel: PersistenceProtocol {
     var viewState: ViewState = .loading
     private var ads: [AdItemModel] = []
     private var favoriteIds: Set<String> = []
+    
+    var selectedAdTypeFilter: AdType? = nil {
+        didSet {
+            filterAds()
+        }
+    }
 
     var searchText = "" {
         didSet {
@@ -46,14 +51,14 @@ class HomeViewModel: PersistenceProtocol {
 
     func setModelContext(_ modelContext: ModelContext?) {
         self.modelContext = modelContext
-        loadFavoriteIds()
     }
 
-    func loadAds() {
+    func fetchAds() {
         viewState = .loading
         selectedSegment = .all
         searchText = ""
-        loadFavoriteIds()
+        selectedAdTypeFilter = nil
+        fetchFavorites()
 
         let endpoint = AdsEndpoint()
         Task { [weak self] in
@@ -69,7 +74,14 @@ class HomeViewModel: PersistenceProtocol {
     }
     
     // MARK: - Favorites Management
-    
+
+    @discardableResult
+    private func fetchFavorites() -> [FavoriteAdItemModel] {
+        let favorites: [FavoriteAdItemModel] = fetchItems()
+        favoriteIds = Set(favorites.map { $0.id })
+        return favorites
+    }
+
     func isFavorite(adId: String) -> Bool {
         return favoriteIds.contains(adId)
     }
@@ -92,22 +104,28 @@ class HomeViewModel: PersistenceProtocol {
             favoriteIds.insert(adId)
         }
     }
-    
-    private func loadFavoriteIds() {
-        let favorites: [FavoriteAdItemModel] = fetchItems()
-        favoriteIds = Set(favorites.map { $0.id })
-    }
 
     // MARK: - Filtering
+    
+    func resetFilters() {
+        selectedAdTypeFilter = nil
+        searchText = ""
+        filterAds()
+    }
 
     private func filterAds() {
         var filteredAds = [AdItemModel]()
+
         switch selectedSegment {
         case .all:
             filteredAds = ads
         case .favorites:
-            let favoriteItems: [FavoriteAdItemModel] = fetchItems()
+            let favoriteItems = fetchFavorites()
             filteredAds = favoriteItems.map { AdItemModel.fromFavoriteAdItemModel($0) }
+        }
+
+        if let adTypeFilter = selectedAdTypeFilter {
+            filteredAds = filteredAds.filter { $0.adType == adTypeFilter }
         }
 
         if !searchText.isEmpty {

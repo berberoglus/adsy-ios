@@ -7,9 +7,14 @@
 
 import SwiftUI
 
-struct AdGridItemView: View {
+struct AdGridView: View {
+
     let presenter: AdItemPresenter
-    @State private var isFavorite: Bool = false
+    let viewModel: HomeViewModel
+    
+    private var isFavorite: Bool {
+        viewModel.isFavorite(adId: presenter.id)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4.0) {
@@ -28,7 +33,7 @@ struct AdGridItemView: View {
 
 // MARK: - Subviews
 
-private extension AdGridItemView {
+private extension AdGridView {
     
     private var imageView: some View {
         CachedAsyncImageView(url: presenter.imageURL)
@@ -41,7 +46,7 @@ private extension AdGridItemView {
             )
             .overlay(alignment: .topTrailing) {
                 Button {
-                    isFavorite.toggle()
+                    viewModel.toggleFavorite(for: presenter.id)
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.sfProSemibold(size: 20.0))
@@ -52,6 +57,7 @@ private extension AdGridItemView {
                                 .fill(Color.black.opacity(0.3))
                         )
                 }
+                .animation(.spring, value: isFavorite)
                 .padding(8.0)
             }
     }
@@ -79,13 +85,15 @@ private extension AdGridItemView {
 }
 
 #Preview {
-    AdGridItemView(
+    AdGridView(
         presenter: AdItemPresenter(
+            id: "1",
             description: "Beautiful apartment in the city center",
             price: "4 000 000 kr",
             location: "Downtown",
             imageURL: "https://example.com/image.jpg"
-        )
+        ),
+        viewModel: HomeViewModel()
     )
     .padding(.horizontal, 32.0)
 }

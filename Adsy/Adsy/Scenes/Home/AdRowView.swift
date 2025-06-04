@@ -9,8 +9,12 @@ import SwiftUI
 
 struct AdRowView: View {
 
-    @State private var isFavorite: Bool = false
     let presenter: AdItemPresenter
+    let viewModel: HomeViewModel
+
+    private var isFavorite: Bool {
+        viewModel.isFavorite(adId: presenter.id)
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 8.0) {
@@ -49,12 +53,13 @@ private extension AdRowView {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button {
-                    isFavorite.toggle()
+                    viewModel.toggleFavorite(for: presenter.id)
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.sfProSemibold(size: 24.0))
                         .foregroundColor(isFavorite ? .red : .sbPrimaryText)
                 }
+                .animation(.spring, value: isFavorite)
             }
 
             Text(presenter.description)
@@ -78,11 +83,13 @@ private extension AdRowView {
 #Preview {
     AdRowView(
         presenter: AdItemPresenter(
+            id: "1",
             description: "Beautiful apartment in the city center",
             price: "4 500 000 SEK",
             location: "Arendal",
             imageURL: "https://example.com/image.jpg"
-        )
+        ),
+        viewModel: HomeViewModel()
     )
     .padding()
 }

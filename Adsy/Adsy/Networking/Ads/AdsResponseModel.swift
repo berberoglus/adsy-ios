@@ -30,14 +30,11 @@ struct AdItemModel: Decodable {
 }
 
 struct PriceModel: Decodable {
-    let value: Double?
     let total: Double?
 }
 
 struct ImageModel: Decodable {
     let url: String?
-    let height: Double?
-    let width: Double?
 }
 
 enum AdType: String, Decodable {
@@ -57,6 +54,7 @@ enum AdType: String, Decodable {
 extension AdItemModel {
     var presenter: AdItemPresenter {
         return AdItemPresenter(
+            id: id,
             description: description,
             price: formattedPrice,
             location: location,
@@ -83,8 +81,8 @@ extension AdItemModel {
             adType: AdType(rawValue: favoriteAdItemModel.adType)!,
             description: favoriteAdItemModel.desc,
             location: favoriteAdItemModel.location,
-            price: nil,
-            image: nil
+            price: PriceModel(total: favoriteAdItemModel.priceTotal),
+            image: ImageModel(url: favoriteAdItemModel.imageURL)
         )
     }
 
@@ -94,7 +92,7 @@ extension AdItemModel {
             adType: adType.rawValue,
             description: description,
             location: location,
-            priceTotal: price?.total ?? 0,
+            priceTotal: price?.total,
             imageURL: image?.url
         )
     }

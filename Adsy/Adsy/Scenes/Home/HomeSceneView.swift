@@ -107,6 +107,10 @@ private extension HomeSceneView {
                 Text("Try to search for another term")
                     .font(.sfProRegular(size: 15.0))
                     .foregroundColor(.sbSecondaryText)
+            } else if viewModel.selectedSegment == .favorites {
+                Text("Add items to your favorites")
+                    .font(.sfProRegular(size: 15.0))
+                    .foregroundColor(.sbSecondaryText)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -139,7 +143,8 @@ private extension HomeSceneView {
             LazyVStack(spacing: LayoutConstants.listSpacing) {
                 ForEach(ads, id: \.id) { ad in
                     AdRowView(
-                        presenter: ad.presenter
+                        presenter: ad.presenter,
+                        viewModel: viewModel
                     )
                     .padding(.horizontal, LayoutConstants.horizontalPadding)
                 }
@@ -157,8 +162,9 @@ private extension HomeSceneView {
         return ScrollView {
             LazyVGrid(columns: columns, spacing: LayoutConstants.gridSpacing) {
                 ForEach(ads, id: \.id) { ad in
-                    AdGridItemView(
-                        presenter: ad.presenter
+                    AdGridView(
+                        presenter: ad.presenter,
+                        viewModel: viewModel
                     )
                 }
             }

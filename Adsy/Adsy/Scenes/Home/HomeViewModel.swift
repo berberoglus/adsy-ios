@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import Observation
+import SwiftUI
 import SwiftData
+import Combine
 
 @Observable
 class HomeViewModel: PersistenceProtocol {
@@ -26,6 +27,7 @@ class HomeViewModel: PersistenceProtocol {
 
     var viewState: ViewState = .loading
     private var ads: [AdItemModel] = []
+    private var favoriteIds: Set<String> = []
 
     var searchText = "" {
         didSet {
@@ -44,24 +46,59 @@ class HomeViewModel: PersistenceProtocol {
 
     func setModelContext(_ modelContext: ModelContext?) {
         self.modelContext = modelContext
+        loadFavoriteIds()
     }
 
     func loadAds() {
         viewState = .loading
         selectedSegment = .all
         searchText = ""
+        loadFavoriteIds()
 
         let endpoint = AdsEndpoint()
-        Task { @MainActor in
+        Task { [weak self] in
+            guard let self = self else { return }
             do {
-                let response = try await httpClient.client.submitRequest(endpoint: endpoint)
-                ads = response?.items ?? []
-                viewState = ads.isEmpty ? .emptyFilteredAds : .adsLoaded(ads)
+                let response = try await self.httpClient.client.submitRequest(endpoint: endpoint)
+                self.ads = response?.items ?? []
+                self.viewState = self.ads.isEmpty == true ? .emptyFilteredAds : .adsLoaded(self.ads)
             } catch {
-                viewState = .error(error.localizedDescription)
+                self.viewState = .error(error.localizedDescription)
             }
         }
     }
+    
+    // MARK: - Favorites Management
+    
+    func isFavorite(adId: String) -> Bool {
+        return favoriteIds.contains(adId)
+    }
+    
+    func toggleFavorite(for adId: String) {
+        guard let ad = ads.first(where: { $0.id == adId }) else {
+            return
+        }
+
+        if isFavorite(adId: adId) {
+            guard let favoriteToRemove: FavoriteAdItemModel = fetchItems().first(where: { $0.id == adId }) else {
+                return
+            }
+
+            removeItem(favoriteToRemove)
+            favoriteIds.remove(adId)
+        } else {
+            let favoriteItem = ad.toFavoriteAdItemModel()
+            addItem(favoriteItem)
+            favoriteIds.insert(adId)
+        }
+    }
+    
+    private func loadFavoriteIds() {
+        let favorites: [FavoriteAdItemModel] = fetchItems()
+        favoriteIds = Set(favorites.map { $0.id })
+    }
+
+    // MARK: - Filtering
 
     private func filterAds() {
         var filteredAds = [AdItemModel]()
@@ -80,6 +117,7 @@ class HomeViewModel: PersistenceProtocol {
                 return descriptionMatch || locationMatch
             }
         }
+
         viewState = filteredAds.isEmpty ? .emptyFilteredAds : .adsLoaded(filteredAds)
     }
 }

@@ -57,10 +57,10 @@ enum AdType: String, Decodable {
 extension AdItemModel {
     var presenter: AdItemPresenter {
         return AdItemPresenter(
-            description: description ?? "No description",
+            description: description,
             price: formattedPrice,
-            location: location ?? "Unknown",
-            imageURL: DefaultEnvironment.imageURL(for: image?.url ?? "")
+            location: location,
+            imageURL: image?.url
         )
     }
 
@@ -71,5 +71,31 @@ extension AdItemModel {
         }
 
         return priceString
+    }
+}
+
+// MARK: - Conversion
+
+extension AdItemModel {
+    static func fromFavoriteAdItemModel(_ favoriteAdItemModel: FavoriteAdItemModel) -> AdItemModel {
+        return AdItemModel(
+            id: favoriteAdItemModel.id,
+            adType: AdType(rawValue: favoriteAdItemModel.adType)!,
+            description: favoriteAdItemModel.desc,
+            location: favoriteAdItemModel.location,
+            price: nil,
+            image: nil
+        )
+    }
+
+    func toFavoriteAdItemModel() -> FavoriteAdItemModel {
+        return FavoriteAdItemModel(
+            id: id,
+            adType: adType.rawValue,
+            description: description,
+            location: location,
+            priceTotal: price?.total ?? 0,
+            imageURL: image?.url
+        )
     }
 }

@@ -12,4 +12,16 @@ struct AdItemPresenter {
     let price: String
     let location: String
     let imageURL: URL?
+
+    init(
+        description: String?,
+        price: String?,
+        location: String?,
+        imageURL: String?
+    ) {
+        self.description = description ?? "No description"
+        self.price = price ?? "Contact Seller"
+        self.location = location ?? "Unknown"
+        self.imageURL = DefaultEnvironment.imageURL(for: imageURL ?? "")
+    }
 }

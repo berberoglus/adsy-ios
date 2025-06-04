@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct AdsyApp: App {
@@ -13,5 +14,6 @@ struct AdsyApp: App {
         WindowGroup {
             HomeSceneView()
         }
+        .modelContainer(for: FavoriteAdItemModel.self)
     }
 }

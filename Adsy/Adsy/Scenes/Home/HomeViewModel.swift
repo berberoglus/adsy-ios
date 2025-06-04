@@ -7,9 +7,10 @@
 
 import Foundation
 import Observation
+import SwiftData
 
 @Observable
-class HomeViewModel {
+class HomeViewModel: PersistenceProtocol {
 
     enum SegmentOption: String, CaseIterable {
         case all = "All"
@@ -28,18 +29,23 @@ class HomeViewModel {
 
     var searchText = "" {
         didSet {
-            filterAds(searchText: searchText, filter: selectedSegment)
+            filterAds()
         }
     }
 
     var selectedSegment: SegmentOption = .all {
         didSet {
-            filterAds(searchText: searchText, filter: selectedSegment)
+            filterAds()
         }
     }
-    
+
     private let httpClient = HTTPClientWrapper()
-    
+    private(set) var modelContext: ModelContext?
+
+    func setModelContext(_ modelContext: ModelContext?) {
+        self.modelContext = modelContext
+    }
+
     func loadAds() {
         viewState = .loading
         selectedSegment = .all
@@ -56,23 +62,24 @@ class HomeViewModel {
             }
         }
     }
-    
-    private func filterAds(searchText: String, filter: SegmentOption) {
-        var filtered = ads
+
+    private func filterAds() {
+        var filteredAds = [AdItemModel]()
+        switch selectedSegment {
+        case .all:
+            filteredAds = ads
+        case .favorites:
+            let favoriteItems: [FavoriteAdItemModel] = fetchItems()
+            filteredAds = favoriteItems.map { AdItemModel.fromFavoriteAdItemModel($0) }
+        }
 
         if !searchText.isEmpty {
-            filtered = filtered.filter { ad in
+            filteredAds = filteredAds.filter { ad in
                 let descriptionMatch = ad.description?.lowercased().contains(searchText.lowercased()) ?? false
                 let locationMatch = ad.location?.lowercased().contains(searchText.lowercased()) ?? false
                 return descriptionMatch || locationMatch
             }
         }
-
-        // TODO: 🔥 fix it later
-        if filter == .favorites {
-            filtered = filtered.filter { $0.id.hashValue % 25 == 0 }
-        }
-
-        viewState = filtered.isEmpty ? .emptyFilteredAds : .adsLoaded(filtered)
+        viewState = filteredAds.isEmpty ? .emptyFilteredAds : .adsLoaded(filteredAds)
     }
 }

@@ -21,6 +21,7 @@ struct HomeSceneView: View {
         case grid
     }
 
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = HomeViewModel()
     @State private var viewMode: ViewMode = .list
 
@@ -45,6 +46,7 @@ struct HomeSceneView: View {
                 }
             }
             .onAppear {
+                viewModel.setModelContext(modelContext)
                 viewModel.loadAds()
             }
         }

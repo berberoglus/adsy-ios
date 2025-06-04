@@ -81,7 +81,7 @@ private extension AdRowView {
             description: "Beautiful apartment in the city center",
             price: "4 500 000 SEK",
             location: "Arendal",
-            imageURL: URL(string: "https://example.com/image.jpg")
+            imageURL: "https://example.com/image.jpg"
         )
     )
     .padding()

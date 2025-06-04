@@ -84,7 +84,7 @@ private extension AdGridItemView {
             description: "Beautiful apartment in the city center",
             price: "4 000 000 kr",
             location: "Downtown",
-            imageURL: URL(string: "https://example.com/image.jpg")
+            imageURL: "https://example.com/image.jpg"
         )
     )
     .padding(.horizontal, 32.0)

@@ -37,7 +37,7 @@ struct ImageModel: Decodable {
     let url: String?
 }
 
-enum AdType: String, Decodable {
+enum AdType: String, Decodable, CaseIterable {
     case realestate = "REALESTATE"
     case bap = "BAP"
     case b2b = "B2B"

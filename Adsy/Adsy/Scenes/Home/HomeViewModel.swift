@@ -53,6 +53,14 @@ class HomeViewModel: PersistenceProtocol {
         }
     }
 
+    var filterTypes: [(title: String, filter: AdType?)] {
+        var filters: [(title: String, filter: AdType?)] = [(title: "All Types", filter: nil)]
+        AdType.allCases.forEach { adType in
+            filters.append((title: adType.title, filter: adType))
+        }
+        return filters
+    }
+
     private let httpClient = HTTPClientWrapper()
     private(set) var modelContext: ModelContext?
 
@@ -154,6 +162,23 @@ class HomeViewModel: PersistenceProtocol {
             viewState = .emptyFilteredAds(.noFavorites)
         } else if selectedAdTypeFilter != nil {
             viewState = .emptyFilteredAds(.noAdsForSelectedAdFilterType)
+        }
+    }
+}
+
+private extension AdType {
+    var title: String {
+        switch self {
+        case .realestate:
+            return "Real Estate"
+        case .bap:
+            return "BAP"
+        case .b2b:
+            return "Business"
+        case .car:
+            return "Vehicles"
+        case .other:
+            return "Other"
         }
     }
 }

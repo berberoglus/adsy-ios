@@ -60,9 +60,10 @@ struct HomeSceneView: View {
                 viewModel.fetchAds()
             }
             .sheet(isPresented: $shouldShowFilterView) {
-                AdTypeFilterView(
+                GenericFilterView(
                     selectedFilter: $viewModel.selectedAdTypeFilter,
-                    isPresented: $shouldShowFilterView
+                    isPresented: $shouldShowFilterView,
+                    filterTypes: viewModel.filterTypes,
                 )
                 .presentationDetents([.medium])
             }

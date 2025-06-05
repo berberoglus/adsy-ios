@@ -1,5 +1,5 @@
 //
-//  AdTypeFilterView.swift
+//  GenericFilterView.swift
 //  Adsy
 //
 //  Created by Samet Berberoğlu on 2025-06-04.
@@ -7,26 +7,26 @@
 
 import SwiftUI
 
-struct AdTypeFilterView: View {
-    @Binding var selectedFilter: AdType?
+struct GenericFilterView<FilterValue: Hashable>: View {
+    @Binding var selectedFilter: FilterValue?
     @Binding var isPresented: Bool
     
-    private let adTypes: [AdType?] = [nil, .realestate, .car, .bap, .b2b, .other]
-    
+    let filterTypes: [(title: String, filter: FilterValue?)]
+
     var body: some View {
         NavigationStack {
             List {
-                ForEach(adTypes, id: \.self) { adType in
+                ForEach(filterTypes.indices, id: \.self) { index in
                     Button {
-                        selectedFilter = adType
+                        selectedFilter = filterTypes[index].filter
                         isPresented = false
                     } label: {
                         HStack {
-                            Text(displayName(for: adType))
+                            Text(filterTypes[index].title)
                                 .foregroundStyle(Color.sbPrimaryText)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            if adType == selectedFilter {
+                            if filterTypes[index].filter == selectedFilter {
                                 Image(systemName: "checkmark")
                                     .foregroundStyle(Color.accentColor)
                             }
@@ -46,35 +46,21 @@ struct AdTypeFilterView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Reset") {
                         selectedFilter = nil
+                        isPresented = false
                     }
                 }
             }
         }
     }
-    
-    private func displayName(for adType: AdType?) -> String {
-        guard let adType = adType else {
-            return "All Types"
-        }
-        
-        switch adType {
-        case .realestate:
-            return "Real Estate"
-        case .bap:
-            return "BAP"
-        case .b2b:
-            return "Business"
-        case .car:
-            return "Vehicles"
-        case .other:
-            return "Other"
-        }
-    }
 }
 
 #Preview {
-    AdTypeFilterView(
-        selectedFilter: .constant(.car),
-        isPresented: .constant(true)
+    let filters = AdType.allCases.map {
+        (title: $0.rawValue, filter: $0)
+    }
+    GenericFilterView(
+        selectedFilter: .constant(filters[0].filter),
+        isPresented: .constant(true),
+        filterTypes: filters
     )
 } 

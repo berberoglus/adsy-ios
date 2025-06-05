@@ -20,15 +20,22 @@ class HomeViewModel: PersistenceProtocol {
     enum ViewState {
         case loading
         case error(_ errorMessage: String)
-        case emptyFilteredAds
+        case emptyFilteredAds(_ state: EmptyState)
         case adsLoaded(_ ads: [AdItemModel])
+    }
+
+    enum EmptyState {
+        case noResults
+        case noResultForSearch
+        case noFavorites
+        case noAdsForSelectedAdFilterType
     }
 
     var viewState: ViewState = .loading
     private var ads: [AdItemModel] = []
     private var favoriteIds: Set<String> = []
     
-    var selectedAdTypeFilter: AdType? = nil {
+    var selectedAdTypeFilter: AdType? {
         didSet {
             filterAds()
         }
@@ -66,7 +73,7 @@ class HomeViewModel: PersistenceProtocol {
             do {
                 let response = try await self.httpClient.client.submitRequest(endpoint: endpoint)
                 self.ads = response?.items ?? []
-                self.viewState = self.ads.isEmpty == true ? .emptyFilteredAds : .adsLoaded(self.ads)
+                self.viewState = self.ads.isEmpty == true ? .emptyFilteredAds(.noResults) : .adsLoaded(self.ads)
             } catch {
                 self.viewState = .error(error.localizedDescription)
             }
@@ -136,6 +143,17 @@ class HomeViewModel: PersistenceProtocol {
             }
         }
 
-        viewState = filteredAds.isEmpty ? .emptyFilteredAds : .adsLoaded(filteredAds)
+        if !filteredAds.isEmpty {
+            viewState = .adsLoaded(filteredAds)
+            return
+        }
+
+        if !searchText.isEmpty {
+            viewState = .emptyFilteredAds(.noResultForSearch)
+        } else if selectedSegment == .favorites {
+            viewState = .emptyFilteredAds(.noFavorites)
+        } else if selectedAdTypeFilter != nil {
+            viewState = .emptyFilteredAds(.noAdsForSelectedAdFilterType)
+        }
     }
 }

@@ -89,8 +89,8 @@ private extension HomeSceneView {
             loadingView
         case .error(let errorMessage):
             errorView(errorMessage)
-        case .emptyFilteredAds:
-            emptyFilterView
+        case .emptyFilteredAds(let state):
+            emptyFilterView(for: state)
         case .adsLoaded(let ads):
             contentView(ads)
         }
@@ -110,7 +110,7 @@ private extension HomeSceneView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var emptyFilterView: some View {
+    private func emptyFilterView(for state: HomeViewModel.EmptyState) -> some View {
         VStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
                 .font(.sfProRegular(size: 48.0))
@@ -120,27 +120,29 @@ private extension HomeSceneView {
                 .font(.sfProSemibold(size: 17.0))
                 .foregroundStyle(Color.sbPrimaryText)
 
-            if !viewModel.searchText.isEmpty {
-                Text("Try to search for another term")
-                    .font(.sfProRegular(size: 15.0))
-                    .foregroundStyle(Color.sbSecondaryText)
-            } else if viewModel.selectedSegment == .favorites {
-                Text("Add items to your favorites")
-                    .font(.sfProRegular(size: 15.0))
-                    .foregroundStyle(Color.sbSecondaryText)
-            } else if viewModel.selectedAdTypeFilter != nil {
-                Text("No ads in this category")
-                    .font(.sfProRegular(size: 15.0))
-                    .foregroundStyle(Color.sbSecondaryText)
-                Button {
-                    viewModel.resetFilters()
-                } label: {
-                    Label("Clear Filters", systemImage: "xmark.circle")
+            Group {
+                switch state {
+                case .noResults:
+                    EmptyView()
+                case .noResultForSearch:
+                    Text("Try to search for another term")
+                case .noFavorites:
+                    Text("Add items to your favorites")
+                case .noAdsForSelectedAdFilterType:
+                    Text("No ads in this category")
+                    Button {
+                        viewModel.resetFilters()
+                    } label: {
+                        Label("Clear Filters", systemImage: "xmark.circle")
+                            .foregroundStyle(Color.sbConstantText)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .padding(.top, 8.0)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .padding(.top, 8.0)
             }
+            .font(.sfProRegular(size: 15.0))
+            .foregroundStyle(Color.sbSecondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
